@@ -8,9 +8,10 @@ public abstract class Usuario implements Serializable {
     protected String nombre;
     protected String correo;
 
-    public Usuario(){}
+    public Usuario() {
+    }
 
-    public Usuario(String nombre, String correo){
+    public Usuario(String nombre, String correo) {
         this.nombre = nombre;
         this.correo = correo;
     }

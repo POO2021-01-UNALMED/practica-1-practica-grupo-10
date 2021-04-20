@@ -1,6 +1,10 @@
 package uiMain;
 
 import baseDatos.RepositorioAdministrador;
+import baseDatos.RepositorioColumna;
+import baseDatos.RepositorioTablero;
+import gestorAplicacion.tablero.Columna;
+import gestorAplicacion.tablero.Tablero;
 import gestorAplicacion.usuarios.Administrador;
 
 import java.io.IOException;
@@ -8,6 +12,8 @@ import java.util.Scanner;
 
 public class Main {
     static Scanner sc = new Scanner(System.in);
+    static RepositorioTablero repositorioTablero = new RepositorioTablero();
+    static RepositorioAdministrador repositorioAdministrador = new RepositorioAdministrador();
 
     public static void main(String[] args) throws IOException {
         int opcion = 0;
@@ -16,6 +22,9 @@ public class Main {
             System.out.println("Menú principal\n");
             System.out.println("1 Crear administrador.");
             System.out.println("2 Mostrar administrador.");
+            System.out.println("3 Crear tablero.");
+            System.out.println("4 Mostrar tablero.");
+            System.out.println("5 Crear columna.");
             System.out.println("9 Salir.");
             System.out.print("\nEcoja una opcion: ");
 
@@ -28,6 +37,15 @@ public class Main {
                 case 2:
                     mostrarAdministrador();
                     break;
+                case 3:
+                    crearTablero();
+                    break;
+                case 4:
+                    mostrarTablero();
+                    break;
+                case 5:
+                    agregarColumna();
+                    break;
                 case 9:
                     break;
             }
@@ -36,8 +54,43 @@ public class Main {
         System.exit(0);
     }
 
+    private static void agregarColumna() throws IOException {
+        System.out.println("Creando una nueva Columna");
+        System.out.print("Indique el titulo de la columna: ");
+        String nombre = sc.next();
+
+        Tablero tablero = repositorioTablero.leer();
+
+        Columna columna = new Columna(tablero, nombre);
+        tablero.agregarColumna(columna);
+        repositorioTablero.guardar(tablero);
+
+        System.out.println("Columna creada correctamente\n");
+    }
+
+    private static void crearTablero() throws IOException {
+        System.out.println("Creando un nuevo tablero");
+        System.out.print("Indique el titulo del tablero: ");
+        String nombre = sc.next();
+
+        Tablero tablero = new Tablero(nombre);
+        repositorioTablero.guardar(tablero);
+
+        System.out.println("Tablero creado correctamente\n");
+    }
+
+    private static void mostrarTablero() {
+        Tablero tablero = repositorioTablero.leer();
+        if (tablero == null) {
+            System.out.println("No se encontró el tablero");
+            return;
+        }
+
+        System.out.println(tablero);
+    }
+
     public static void mostrarAdministrador() {
-        Administrador admin = RepositorioAdministrador.leer();
+        Administrador admin = repositorioAdministrador.leer();
         if (admin == null) {
             System.out.println("No se encontró el administrador");
         }
@@ -55,10 +108,6 @@ public class Main {
         Administrador admin = new Administrador(nombre, correo);
         RepositorioAdministrador.guardar(admin);
 
-        if (admin == null) {
-            System.out.println("No se encontró el administrador");
-        }
-
-        System.out.println(admin);
+        System.out.println("Administrador creado correctamente\n");
     }
 }

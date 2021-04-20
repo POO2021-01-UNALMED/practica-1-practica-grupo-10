@@ -6,9 +6,9 @@ import java.io.*;
 
 public class RepositorioAdministrador {
 
-    private static String rutaDirectorio = "src\\baseDatos\\temp";
-    private static String archivoAdministrador = "administrador";
-    private static String rutaCompleta = rutaDirectorio + "\\" + archivoAdministrador;
+    private final static String rutaDirectorio = "src\\baseDatos\\temp";
+    private final static String archivoAdministrador = "administrador";
+    private final static String rutaCompleta = rutaDirectorio + "\\" + archivoAdministrador;
 
     private static final File archivo = new File(rutaCompleta);
 
