@@ -1,13 +1,14 @@
 package uiMain;
 
 import baseDatos.RepositorioAdministrador;
-import baseDatos.RepositorioColumna;
 import baseDatos.RepositorioTablero;
 import gestorAplicacion.tablero.Columna;
 import gestorAplicacion.tablero.Tablero;
+import gestorAplicacion.tablero.Tarjeta;
 import gestorAplicacion.usuarios.Administrador;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -46,12 +47,33 @@ public class Main {
                 case 5:
                     agregarColumna();
                     break;
+                case 6:
+                    agregarTarjeta();
+                    break;
                 case 9:
                     break;
             }
         } while (opcion != 9);
 
         System.exit(0);
+    }
+
+    private static void agregarTarjeta() throws IOException {
+        System.out.println("Creando una nueva Tarjeta");
+        System.out.print("Indique el titulo de la tarjeta: ");
+        String titulo = sc.next();
+
+        System.out.print("Indique la descripcion de la tarjeta: ");
+        String descripcion = sc.next();
+
+        Tablero tablero = repositorioTablero.leer();
+        List<Columna> columnas = tablero.getColumnas();
+
+        Columna primerColumna = columnas.get(0);
+
+        Tarjeta tarjeta = new Tarjeta(primerColumna, titulo, descripcion);
+
+        repositorioTablero.guardar(tablero);
     }
 
     private static void agregarColumna() throws IOException {

@@ -1,47 +1,40 @@
 package gestorAplicacion.tablero;
 
 import java.io.Serializable;
+
 import gestorAplicacion.usuarios.*;
 
-public class Tarjeta implements Serializable{
-	  private String titulo;
-	  private Columna columna;
-	  private String descripcion;
-	  private String color;
-	  private Usuario usuario;
-	  
-	  public Tarjeta() {}
-	  
-	  
-	  public Tarjeta(String titulo, Columna columna, String descripcion, String color, Usuario usuario) {
-		super();
-		this.titulo = titulo;
-		this.columna = columna;
-		this.descripcion = descripcion;
-		this.color = color;
-		this.usuario = usuario;
-	  }
-	  
-	 
+public class Tarjeta implements Serializable {
+    private static final long serialVersionUID = 1;
 
+    private String titulo;
+    private Columna columna;
+    private String descripcion;
 
-	  private void mover(Columna columna) {
-		    
-	  }
-	  private void agregarComentario(Columna columna) {
-		    
-	  }
+    public Tarjeta() {
+    }
 
+    public Tarjeta(Columna columna, String titulo, String descripcion) {
+        this.titulo = titulo;
+        this.columna = columna;
+        this.descripcion = descripcion;
 
-	public Columna getColumna() {
-		return columna;
-	}
+        this.columna.agregarTarjeta(this);
+    }
 
+    public Columna getColumna() {
+        return columna;
+    }
 
-	public void setColumna(Columna columna) {
-		this.columna = columna;
-	}
-    
-	
-	  
+    public void setColumna(Columna columna) {
+        this.columna = columna;
+    }
+
+    @Override
+    public String toString() {
+        return "\tTarjeta: \n"
+                + "\t\tTitulo: " + titulo
+                + "\t\tDescripcio: " + descripcion;
+    }
+
 }

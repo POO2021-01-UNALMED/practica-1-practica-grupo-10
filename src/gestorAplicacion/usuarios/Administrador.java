@@ -15,8 +15,8 @@ public class Administrador extends Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return "Administrador: \n"
-                + "nombre: " + nombre + "\n"
-                + "correo: " + correo + "\n";
+        return "Usuario Administrador: \n"
+                + "\tnombre: " + nombre + "\n"
+                + "\tcorreo: " + correo + "\n";
     }
 }

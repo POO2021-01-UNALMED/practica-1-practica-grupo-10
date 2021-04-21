@@ -7,19 +7,13 @@ import java.util.List;
 public class Columna implements Serializable {
     private static final long serialVersionUID = 1;
 
-    
-   
     private String titulo;
     private Tablero tablero;
-   //agregar posicion de la columna
-    
-    
+    private List<Tarjeta> tarjetas = new ArrayList<>();
 
     public Columna() {
     }
-    //
-    private List<Tarjeta> tarjetas = new ArrayList<>();
-    //
+
     public Columna(Tablero tablero, String titulo) {
         this.tablero = tablero;
         this.titulo = titulo;
@@ -33,8 +27,20 @@ public class Columna implements Serializable {
         return tablero;
     }
 
+    public void agregarTarjeta(Tarjeta tarjeta){
+        tarjetas.add(tarjeta);
+    }
+
+    public List<Tarjeta> getTarjetas(){
+        return tarjetas;
+    }
+
     @Override
     public String toString() {
-        return "Columna: " + titulo + "\n";
+        String cadena = "Columna: " + titulo + "\n";
+        for (Tarjeta t:  tarjetas) {
+            cadena += t.toString() + "\n";
+        }
+        return cadena;
     }
 }
