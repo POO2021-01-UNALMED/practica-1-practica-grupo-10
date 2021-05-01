@@ -47,10 +47,27 @@ public class Tablero implements Serializable {
         return columnas;
     }
 
+    public int ContarTarjetas(){
+        int numeroTarjetas = 0;
+        for (Columna c: columnas) {
+            numeroTarjetas += c.contarTarjetas();
+        }
+
+        return  numeroTarjetas;
+    }
+
+    public Columna encontrarColumna(int indice){
+        if( indice < 0 || indice > columnas.size() - 1)
+            return  null;
+
+        return  columnas.get(indice);
+    }
+
     public String toString() {
         String cadena = "Titulo: " + titulo + "\n";
-        for (Columna c : columnas) {
-            cadena += "\t" + c;
+        for (int i = 0; i < columnas.size(); i++) {
+            Columna c = columnas.get(i);
+            cadena += "\t" + i + " " + c;
         }
         return cadena;
     }

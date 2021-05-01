@@ -26,6 +26,8 @@ public class Main {
             System.out.println("3 Crear tablero.");
             System.out.println("4 Mostrar tablero.");
             System.out.println("5 Crear columna.");
+            System.out.println("6 Crear tarjeta.");
+            System.out.println("7 Mover tarjeta.");
             System.out.println("9 Salir.");
             System.out.print("\nEcoja una opcion: ");
 
@@ -45,10 +47,13 @@ public class Main {
                     mostrarTablero();
                     break;
                 case 5:
-                    agregarColumna();
+                    crearColumna();
                     break;
                 case 6:
-                    agregarTarjeta();
+                    crearTarjeta();
+                    break;
+                case 7:
+                    moverTarjeta();
                     break;
                 case 9:
                     break;
@@ -58,7 +63,41 @@ public class Main {
         System.exit(0);
     }
 
-    private static void agregarTarjeta() throws IOException {
+    private static void moverTarjeta() throws IOException {
+        System.out.println("Moviendo una Tarjeta");
+        System.out.print("Indique el numero de la columna de la tarjeta que desea mover: ");
+        int indiceColumnaOrigen = sc.nextInt();
+
+        Tablero tablero = repositorioTablero.leer();
+        Columna columnaOrigen = tablero.encontrarColumna(indiceColumnaOrigen);
+        if(columnaOrigen == null) {
+            System.out.println("ERROR: NO existe la columna de origen.");
+            return;
+        }
+
+        System.out.print("Indique el identificador de la tarjeta que desea mover: ");
+        int indiceTarjeta = sc.nextInt();
+
+        Tarjeta tarjetaParaMover = columnaOrigen.buscarTarjeta(indiceTarjeta);
+        if(tarjetaParaMover == null){
+            System.out.println("ERROR: NO existe la tarjeta en la columna de origen.");
+            return;
+        }
+        columnaOrigen.quitarTarjeta(tarjetaParaMover);
+
+        System.out.print("Indique el numero de la columna a la que desea mover la tarjeta: ");
+        int indiceColumnaDestino = sc.nextInt();
+        Columna columnaDestino = tablero.encontrarColumna(indiceColumnaDestino);
+        if(columnaDestino == null) {
+            System.out.println("ERROR: NO existe la columna destino.");
+            return;
+        }
+
+        columnaDestino.agregarTarjeta(tarjetaParaMover);
+        repositorioTablero.guardar(tablero);
+    }
+
+    private static void crearTarjeta() throws IOException {
         System.out.println("Creando una nueva Tarjeta");
         System.out.print("Indique el titulo de la tarjeta: ");
         String titulo = sc.next();
@@ -70,13 +109,13 @@ public class Main {
         List<Columna> columnas = tablero.getColumnas();
 
         Columna primerColumna = columnas.get(0);
-
-        Tarjeta tarjeta = new Tarjeta(primerColumna, titulo, descripcion);
+        int idNuevaTarjeta = tablero.ContarTarjetas() + 1;
+        Tarjeta tarjeta = new Tarjeta(primerColumna, titulo, descripcion, idNuevaTarjeta);
 
         repositorioTablero.guardar(tablero);
     }
 
-    private static void agregarColumna() throws IOException {
+    private static void crearColumna() throws IOException {
         System.out.println("Creando una nueva Columna");
         System.out.print("Indique el titulo de la columna: ");
         String nombre = sc.next();

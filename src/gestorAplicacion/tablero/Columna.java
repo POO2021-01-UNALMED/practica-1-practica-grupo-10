@@ -27,18 +27,40 @@ public class Columna implements Serializable {
         return tablero;
     }
 
-    public void agregarTarjeta(Tarjeta tarjeta){
+    public void agregarTarjeta(Tarjeta tarjeta) {
         tarjetas.add(tarjeta);
     }
 
-    public List<Tarjeta> getTarjetas(){
+    public List<Tarjeta> getTarjetas() {
         return tarjetas;
+    }
+
+    public Tarjeta buscarTarjeta(int id) {
+        for (Tarjeta t : tarjetas) {
+            if (t.getId() == id)
+                return t;
+        }
+
+        return null;
+    }
+
+    public int contarTarjetas(){
+        return tarjetas.size();
+    }
+
+    public void quitarTarjeta(Tarjeta tarjeta) {
+        if (!tarjetas.contains(tarjeta)) {
+            System.out.println("Esta intentando remover una tarjeta que no está en la columna indicada.");
+            return;
+        }
+
+        tarjetas.remove(tarjeta);
     }
 
     @Override
     public String toString() {
         String cadena = "Columna: " + titulo + "\n";
-        for (Tarjeta t:  tarjetas) {
+        for (Tarjeta t : tarjetas) {
             cadena += t.toString() + "\n";
         }
         return cadena;
