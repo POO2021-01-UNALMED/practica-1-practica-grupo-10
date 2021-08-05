@@ -2,11 +2,13 @@ package gestorAplicacion.usuarios;
 
 import java.io.Serializable;
 
-public class Administrador extends Usuario implements Serializable {
-    private static final long serialVersionUID = 1;
-
+public class Administrador extends Usuario {
     public Administrador() {
-        super();
+        super("Administrador", "admin@correo.com");
+    }
+
+    public static Administrador getInstance() {
+        return new Administrador();
     }
 
     public Administrador(String nombre, String correo) {

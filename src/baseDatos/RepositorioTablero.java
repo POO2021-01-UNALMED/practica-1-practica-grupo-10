@@ -11,8 +11,6 @@ public class RepositorioTablero {
     }
 
     public Tablero leer() {
-        Tablero tablero = Deserializador.deserializarTablero();
-
-        return tablero;
+        return Deserializador.deserializarTablero();
     }
 }

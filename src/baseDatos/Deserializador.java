@@ -1,26 +1,35 @@
 package baseDatos;
 
+import gestorAplicacion.Configuracion;
 import gestorAplicacion.tablero.Columna;
 import gestorAplicacion.tablero.Tablero;
+import gestorAplicacion.usuarios.Desarrollador;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Deserializador {
-    private final static String rutaDirectorio = "src\\baseDatos\\temp";
+    private final static String nombreDirectorioBase = "src\\baseDatos\\temp";
     private final static String nombreArchivoTablero = "tablero";
     private final static String nombreArchivoColumnas = "columnas";
+    private final static String nombreArchivoConfiguracion = "configuracion";
+    private final static String nombreArchivoDesarrolladores = "desarrolladores";
 
-    private final static String rutaCompletaTablero = rutaDirectorio + "\\" + nombreArchivoTablero;
-    private final static String rutaCompletaColumnas = rutaDirectorio + "\\" + nombreArchivoColumnas;
+    private static String calcularRutaCompleta(String nombreArchivo) {
+        return nombreDirectorioBase + "\\" + nombreArchivo;
+    }
 
-    private static final File archivoTablero = new File(rutaCompletaTablero);
-    private static final File archivoColumnas = new File(rutaCompletaColumnas);
+    private static File obtenerArchivo(String nombreArchivo) {
+        return new File(calcularRutaCompleta(nombreArchivo));
+    }
 
     public static Tablero deserializarTablero() {
         FileInputStream fis;
         ObjectInputStream ois;
         Tablero tablero = null;
+
+        File archivoTablero = obtenerArchivo(nombreArchivoTablero);
 
         if (!archivoTablero.exists()) {
             return null;
@@ -32,6 +41,7 @@ public class Deserializador {
                 ois = new ObjectInputStream(fis);
                 tablero = (Tablero) ois.readObject();
 
+                File archivoColumnas = obtenerArchivo(nombreArchivoColumnas);
                 if (archivoColumnas.exists()) {
                     List<Columna> columnas = deserializarColumnas();
                     tablero.setColumnas(columnas);
@@ -49,10 +59,41 @@ public class Deserializador {
         return tablero;
     }
 
+    public static Configuracion deserializarConfiguracion() {
+        FileInputStream fis;
+        ObjectInputStream ois;
+        Configuracion configuracion = null;
+
+        File archivoConfiguracion = obtenerArchivo(nombreArchivoConfiguracion);
+
+        if (!archivoConfiguracion.exists()) {
+            return null;
+        }
+
+        if (archivoConfiguracion.getAbsolutePath().contains(nombreArchivoConfiguracion)) {
+            try {
+                fis = new FileInputStream(archivoConfiguracion.getAbsolutePath());
+                ois = new ObjectInputStream(fis);
+
+                configuracion = (Configuracion) ois.readObject();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return configuracion;
+    }
+
     public static List<Columna> deserializarColumnas() {
         FileInputStream fis;
         ObjectInputStream ois;
         List<Columna> columnas = null;
+
+        File archivoColumnas = obtenerArchivo(nombreArchivoColumnas);
 
         if (!archivoColumnas.exists()) {
             return null;
@@ -75,4 +116,37 @@ public class Deserializador {
 
         return columnas;
     }
+
+    public static List<Desarrollador> deserializarDesarrolladores() {
+        FileInputStream fis;
+        ObjectInputStream ois;
+        List<Desarrollador> desarrolladores = null;
+
+        File archivoDesarrolladores = obtenerArchivo(nombreArchivoDesarrolladores);
+
+        if (!archivoDesarrolladores.exists()) {
+            return new ArrayList<>();
+        }
+
+        if (archivoDesarrolladores.getAbsolutePath().contains(nombreArchivoDesarrolladores)) {
+            try {
+                fis = new FileInputStream(archivoDesarrolladores.getAbsolutePath());
+                ois = new ObjectInputStream(fis);
+
+                desarrolladores = (List<Desarrollador>) ois.readObject();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (desarrolladores == null)
+            desarrolladores = new ArrayList<>();
+
+        return desarrolladores;
+    }
+
 }

@@ -1,7 +1,9 @@
 package baseDatos;
 
+import gestorAplicacion.Configuracion;
 import gestorAplicacion.tablero.Columna;
 import gestorAplicacion.tablero.Tablero;
+import gestorAplicacion.usuarios.Desarrollador;
 
 import java.io.*;
 import java.util.List;
@@ -9,13 +11,76 @@ import java.util.List;
 public class Serializador {
     private final static String nombreDirectorioBase = "src\\baseDatos\\temp";
     private final static String nombreArchivotablero = "tablero";
-    private final static String nombreArchivoColumnas = "columnas";
+    private final static String nombreArchivoConfiguracion = "configuracion";
+    private final static String nombreArchivoDesarrolladores = "desarrolladores";
 
-    private final static String rutaCompletaTablero = nombreDirectorioBase + "\\" + nombreArchivotablero;
-    private final static String rutaCompletaColumnas = nombreDirectorioBase + "\\" + nombreArchivoColumnas;
+    private static String calcularRutaCompleta(String nombreArchivo) {
+        return nombreDirectorioBase + "\\" + nombreArchivo;
+    }
 
-    private static final File archivoTablero = new File(rutaCompletaTablero);
-    private static final File archivoColumnas = new File(rutaCompletaColumnas);
+    private static File obtenerArchivo(String nombreArchivo) {
+        return new File(calcularRutaCompleta(nombreArchivo));
+    }
+
+    public static void serializar(List<Desarrollador> desarrolladores) throws IOException {
+        FileOutputStream fos;
+        ObjectOutputStream oos;
+        PrintWriter pw;
+
+        File archivo = obtenerArchivo(nombreArchivoDesarrolladores);
+
+        if (archivo.exists()) {
+            try {
+                pw = new PrintWriter(archivo);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            fos = new FileOutputStream(archivo.getAbsolutePath());
+            oos = new ObjectOutputStream(fos);
+
+            oos.writeObject(desarrolladores);
+
+            oos.close();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void serializar(Configuracion configuracion) throws IOException {
+        FileOutputStream fos;
+        ObjectOutputStream oos;
+
+        PrintWriter pw;
+
+        File archivoConfiguracion = obtenerArchivo(nombreArchivoConfiguracion);
+
+        if (archivoConfiguracion.exists()) {
+            try {
+                pw = new PrintWriter(archivoConfiguracion);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            fos = new FileOutputStream(archivoConfiguracion.getAbsolutePath());
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(configuracion);
+
+            oos.flush();
+            fos.flush();
+
+            oos.close();
+            fos.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void serializar(Tablero tablero) throws IOException {
 
@@ -23,6 +88,8 @@ public class Serializador {
         ObjectOutputStream oos;
 
         PrintWriter pw;
+
+        File archivoTablero = obtenerArchivo(nombreArchivotablero);
 
         if (archivoTablero.exists()) {
             try {
@@ -43,40 +110,9 @@ public class Serializador {
             oos.close();
             fos.close();
 
-            serializar(tablero.getColumnas());
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public static void serializar(List<Columna> columnas) throws IOException {
-        FileOutputStream fos;
-        ObjectOutputStream oos;
-
-        PrintWriter pw;
-
-        if (archivoColumnas.exists()) {
-            try {
-                pw = new PrintWriter(archivoColumnas);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        try {
-            fos = new FileOutputStream(archivoColumnas.getAbsolutePath());
-            oos = new ObjectOutputStream(fos);
-
-            oos.writeObject(columnas);
-
-            oos.flush();
-            fos.flush();
-
-            oos.close();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 }

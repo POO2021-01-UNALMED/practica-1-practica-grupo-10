@@ -15,9 +15,16 @@ public class Tablero implements Serializable {
 
     public Tablero(String titulo) {
         this.titulo = titulo;
-        Columna pendiente = new Columna(this, "Pendiente");
+        Columna pendiente = new Columna(this, "Por Hacer", new ArrayList<>(), 0);
         columnas.add(pendiente);
-        Columna hecho = new Columna(this, "Hecho");
+
+        List<Columna> validasEnProceso = new ArrayList<>();
+        validasEnProceso.add(pendiente);
+        Columna enProceso = new Columna(this, "En Proceso", validasEnProceso, 1);
+
+        List<Columna> validasHecho = new ArrayList<>();
+        columnas.add(enProceso);
+        Columna hecho = new Columna(this, "Hecho", validasHecho, 2);
         columnas.add(hecho);
     }
 
@@ -47,27 +54,28 @@ public class Tablero implements Serializable {
         return columnas;
     }
 
-    public int ContarTarjetas(){
+    public int ContarTarjetas() {
         int numeroTarjetas = 0;
-        for (Columna c: columnas) {
+        for (Columna c : columnas) {
             numeroTarjetas += c.contarTarjetas();
         }
 
-        return  numeroTarjetas;
+        return numeroTarjetas;
     }
 
-    public Columna encontrarColumna(int indice){
-        if( indice < 0 || indice > columnas.size() - 1)
-            return  null;
+    public Columna encontrarColumna(int indice) {
+        if (indice < 0 || indice > columnas.size() - 1)
+            return null;
 
-        return  columnas.get(indice);
+        return columnas.get(indice);
     }
 
     public String toString() {
-        String cadena = "Titulo: " + titulo + "\n";
+        String cadena = "Titulo del Tablero: " + titulo + "\n";
+        cadena += "\tColumnas: \n";
         for (int i = 0; i < columnas.size(); i++) {
             Columna c = columnas.get(i);
-            cadena += "\t" + i + " " + c;
+            cadena += "\t\t" + c;
         }
         return cadena;
     }

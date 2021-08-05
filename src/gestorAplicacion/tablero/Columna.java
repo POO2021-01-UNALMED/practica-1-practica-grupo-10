@@ -7,16 +7,40 @@ import java.util.List;
 public class Columna implements Serializable {
     private static final long serialVersionUID = 1;
 
+    private int id;
     private String titulo;
     private Tablero tablero;
     private List<Tarjeta> tarjetas = new ArrayList<>();
+    private List<Columna> fuentesValidas = new ArrayList<>();
 
     public Columna() {
     }
 
-    public Columna(Tablero tablero, String titulo) {
+    public Columna(Tablero tablero, String titulo, List<Columna> fuentesValidas, int id) {
         this.tablero = tablero;
         this.titulo = titulo;
+        this.fuentesValidas = fuentesValidas;
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public void setTarjetas(List<Tarjeta> tarjetas) {
+        this.tarjetas = tarjetas;
     }
 
     public void setTablero(Tablero tablero) {
@@ -25,6 +49,22 @@ public class Columna implements Serializable {
 
     public Tablero getTablero() {
         return tablero;
+    }
+
+    public List<Columna> getFuentesValidas() {
+        return fuentesValidas;
+    }
+
+    public void setFuentesValidas(List<Columna> fuentesValidas) {
+        this.fuentesValidas = fuentesValidas;
+    }
+
+    public void agregarFuenteValida(Columna columna) {
+        fuentesValidas.add(columna);
+    }
+
+    public void removerFuenteValida(Columna columna) {
+        fuentesValidas.remove(columna);
     }
 
     public void agregarTarjeta(Tarjeta tarjeta) {
@@ -44,7 +84,7 @@ public class Columna implements Serializable {
         return null;
     }
 
-    public int contarTarjetas(){
+    public int contarTarjetas() {
         return tarjetas.size();
     }
 
@@ -59,9 +99,11 @@ public class Columna implements Serializable {
 
     @Override
     public String toString() {
-        String cadena = "Columna: " + titulo + "\n";
+        String cadena = "id: " + getId() + " Titulo Columna: " + titulo + "\n";
         for (Tarjeta t : tarjetas) {
-            cadena += t.toString() + "\n";
+            cadena += "\t\t\tid: " + t.getId() + "\t titulo: " + t.getTitulo() +
+                    " encargado: (" + t.getEncargado().getId() + ") " +
+                    t.getEncargado().getNombre() + "\n";
         }
         return cadena;
     }
