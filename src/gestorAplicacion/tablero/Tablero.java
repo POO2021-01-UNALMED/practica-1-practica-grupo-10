@@ -80,4 +80,16 @@ public class Tablero implements Serializable {
         }
         return cadena;
     }
+
+    public int contarTarjetasPorDesarrollador(int id) {
+        int numTarjetas = 0;
+        for (Columna c : columnas) {
+            for (Tarjeta t : c.getTarjetas()) {
+                if (t.getEncargado().getId() == id) {
+                    numTarjetas++;
+                }
+            }
+        }
+        return numTarjetas;
+    }
 }

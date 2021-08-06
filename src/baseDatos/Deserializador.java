@@ -21,6 +21,10 @@ public class Deserializador {
     }
 
     private static File obtenerArchivo(String nombreArchivo) {
+        File directory = new File(String.valueOf(nombreDirectorioBase));
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
         return new File(calcularRutaCompleta(nombreArchivo));
     }
 
@@ -96,7 +100,7 @@ public class Deserializador {
         File archivoColumnas = obtenerArchivo(nombreArchivoColumnas);
 
         if (!archivoColumnas.exists()) {
-            return null;
+            return new ArrayList<>();
         }
 
         if (archivoColumnas.getAbsolutePath().contains(nombreArchivoColumnas)) {
@@ -113,6 +117,9 @@ public class Deserializador {
                 e.printStackTrace();
             }
         }
+
+        if (columnas == null)
+            columnas = new ArrayList<>();
 
         return columnas;
     }

@@ -29,6 +29,7 @@ public class Main {
         ActionType action;
 
         Usuario usuario;
+        crearConfiguracionSinoExiste();
         do {
             usuario = iniciarSesion();
             if (usuario == null) {
@@ -84,7 +85,8 @@ public class Main {
     }
 
     private static Usuario iniciarSesion() {
-        System.out.println("Seleccione el usuario con el que desea iniciar sesion por id: ");
+        System.out.println("Usuarios Existentes: ");
+        System.out.println();
         var admin = Administrador.getInstance();
         System.out.println();
         System.out.println("-------------Administrador: requiere contraseña");
@@ -92,10 +94,11 @@ public class Main {
         System.out.println();
         mostrarDesarrolladores();
 
+        System.out.println("Seleccione el usuario con el que desea iniciar sesion por id: ");
         int devId = Integer.parseInt(sc.nextLine());
         if (devId == 0) {
 
-            System.out.println("Ingrese la contraseña para ingresar como administrado: ");
+            System.out.println("Ingrese la contraseña para ingresar como administrador: ");
             String password = sc.nextLine();
             if (!password.equals(admin.getPassword()))
                 return null;
@@ -127,7 +130,7 @@ public class Main {
     private static void mostrarMenuPrincipal() {
         System.out.println("Menú principal\n");
         System.out.println(ActionType.MOSTRAR_TABLERO.getValue() + ". Mostrar tablero.");
-        System.out.println(ActionType.MOSTRAR_TABLERO_FILTRO_USER_ID.getValue() + ". Mostrar tablero filtrando por id del usuario.");
+        System.out.println(ActionType.MOSTRAR_TABLERO_FILTRO_USER_ID.getValue() + ". Mostrar tablero filtrando por id del Desarrollador.");
         System.out.println(ActionType.MOSTRAR_TABLERO_FILTRO_TITULO.getValue() + ". Mostrar tablero filtrando por titulo.");
         System.out.println(ActionType.MOVER_TARJETA.getValue() + ". Mover tarjeta.");
         System.out.println(ActionType.MOSTRAR_DESARROLLADORES.getValue() + ". Mostrar desarrolladores.");
@@ -161,6 +164,15 @@ public class Main {
             System.out.println("ERROR: NO existe la tarjeta en la columna de origen.");
             return;
         }
+
+        if(!(usuario instanceof Administrador)){
+            Desarrollador dev = (Desarrollador) usuario;
+            if(tarjetaParaMover.getEncargado().getId() != dev.getId()){
+                System.out.println("Error!! Solo el encargado de una tarjeta puede moverla.");
+                return;
+            }
+        }
+
         System.out.print("Indique el numero de la columna a la que desea mover la tarjeta: ");
         int indiceColumnaDestino = Integer.parseInt(sc.nextLine());
         Columna columnaDestino = tablero.encontrarColumna(indiceColumnaDestino);
@@ -209,7 +221,22 @@ public class Main {
             desarrollador = (Desarrollador) usuario;
         }
 
+        Configuracion config = repositorioConfiguracion.leer();
+
+        int numeroTarjetas = tablero.contarTarjetasPorDesarrollador(desarrollador.getId());
+        if(numeroTarjetas >= config.getMaxTarjetasPorUsuario()){
+            System.out.println("El desarrollador no puede tener mas tarjetas asignadas. Verificar configuracion");
+            return;
+        }
+
+
         Columna primerColumna = columnas.get(0);
+
+        if(primerColumna.contarTarjetas() > config.getMaxTarjetasPorColumna()){
+            System.out.println("No se pueden agregar mas tarjetas a la columna, verificar configuracion.");
+            return;
+        }
+
         int idNuevaTarjeta = tablero.ContarTarjetas() + 1;
         Tarjeta tarjeta = new Tarjeta(primerColumna, titulo, descripcion, desarrollador, idNuevaTarjeta);
         repositorioTablero.guardar(tablero);
@@ -316,6 +343,18 @@ public class Main {
             return;
         }
 
+        mostrarDesarrolladores();
+
+        System.out.print("Indique el id del Desarrollador: ");
+        int idDev = Integer.parseInt(sc.nextLine());
+
+        for (Columna c : tablero.getColumnas()) {
+            List<Tarjeta> tarjetas = c.getTarjetas().stream()
+                    .filter(t -> t.getEncargado().getId() == idDev)
+                    .collect(Collectors.toList());
+            c.setTarjetas(tarjetas);
+        }
+
         System.out.println(tablero);
     }
 
@@ -347,6 +386,14 @@ public class Main {
             repositorioConfiguracion.guardar(configuracion);
         }
         System.out.println(configuracion);
+    }
+
+    private static void crearConfiguracionSinoExiste() throws IOException {
+        Configuracion configuracion = repositorioConfiguracion.leer();
+        if (configuracion == null) {
+            configuracion = new Configuracion();
+            repositorioConfiguracion.guardar(configuracion);
+        }
     }
 
     public static void modificarConfiguracion(Usuario usuario) throws IOException {

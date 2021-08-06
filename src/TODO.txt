@@ -1,8 +1,0 @@
-* agregar al repositorio buscar cuantas tarjetas tiene asignada un Desarrollador para cuando se creen
-nuevas restiringirlo
-
-* al agregar tarjeta verificar cuantas tiene la columna
-
-* limitar el mover -> solo en usuario asignado o Administrador puede hacerlo
-
-
