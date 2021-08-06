@@ -11,6 +11,7 @@ public class Tablero implements Serializable {
     private List<Columna> columnas = new ArrayList<>();
 
     public Tablero() {
+        this("nombre tablero generico");
     }
 
     public Tablero(String titulo) {

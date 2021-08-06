@@ -1,6 +1,7 @@
 package uiMain;
 
 import baseDatos.RepositorioConfiguracion;
+import baseDatos.RepositorioConfiguracionImp;
 import baseDatos.RepositorioDesarrollador;
 import baseDatos.RepositorioTablero;
 import gestorAplicacion.Configuracion;
@@ -16,22 +17,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     static Scanner sc = new Scanner(System.in).useDelimiter("\n");
     static RepositorioTablero repositorioTablero = new RepositorioTablero();
-    static RepositorioConfiguracion repositorioConfiguracion = new RepositorioConfiguracion();
+    static RepositorioConfiguracion repositorioConfiguracion = new RepositorioConfiguracionImp();
     static RepositorioDesarrollador repositorioDesarrollador = new RepositorioDesarrollador();
 
     public static void main(String[] args) throws IOException {
         ActionType action;
 
+        Usuario usuario;
         do {
-            //mostrarDesarrolladores();
-            //obtener el usuario, puede ser super usuario
-            //dependiendo del usuario mostrar y permitir hacer ciertas acciones
-            Usuario usuario = Administrador.getInstance();
+            usuario = iniciarSesion();
+            if (usuario == null) {
+                System.out.println("*******Problemas al iniciar sesion*******\n");
+            }
+        } while (usuario == null);
 
+        do {
             mostrarMenuPrincipal();
             int intAction = Integer.parseInt(sc.nextLine());
             action = ActionType.fromInt(intAction);
@@ -40,8 +45,14 @@ public class Main {
                 case MOSTRAR_TABLERO:
                     mostrarTablero();
                     break;
+                case MOSTRAR_TABLERO_FILTRO_USER_ID:
+                    mostrarTableroFiltroUserId();
+                    break;
+                case MOSTRAR_TABLERO_FILTRO_TITULO:
+                    mostrarTableroFiltroTitulo();
+                    break;
                 case MOVER_TARJETA:
-                    moverTarjeta();
+                    moverTarjeta(usuario);
                     break;
                 case CREAR_TARJETA:
                     crearTarjeta(usuario);
@@ -50,16 +61,19 @@ public class Main {
                     mostrarDesarrolladores();
                     break;
                 case CREAR_DESARROLLADOR:
-                    crearDesarrollador();
+                    crearDesarrollador(usuario);
                     break;
                 case MOSTRAR_CONFIGURACION:
                     mostrarConfiguracion();
                     break;
+                case MODIFICAR_CONFIGURACION:
+                    modificarConfiguracion(usuario);
+                    break;
                 case CREAR_COLUMNA:
-                    crearColumna();
+                    crearColumna(usuario);
                     break;
                 case CREAR_TABLERO:
-                    crearTablero();
+                    crearTablero(usuario);
                     break;
                 case SALIR:
                     break;
@@ -69,7 +83,37 @@ public class Main {
         System.exit(0);
     }
 
+    private static Usuario iniciarSesion() {
+        System.out.println("Seleccione el usuario con el que desea iniciar sesion por id: ");
+        var admin = Administrador.getInstance();
+        System.out.println();
+        System.out.println("-------------Administrador: requiere contraseña");
+        System.out.println("\tid: 0\n\tnombre: " + admin.getNombre() + "\n\t" + "correo: " + admin.getCorreo());
+        System.out.println();
+        mostrarDesarrolladores();
+
+        int devId = Integer.parseInt(sc.nextLine());
+        if (devId == 0) {
+
+            System.out.println("Ingrese la contraseña para ingresar como administrado: ");
+            String password = sc.nextLine();
+            if (!password.equals(admin.getPassword()))
+                return null;
+            return admin;
+        }
+
+        List<Desarrollador> desarrolladores = repositorioDesarrollador.leerTodos();
+        var optionalDev = desarrolladores.stream().filter(d -> d.getId() == devId).findFirst();
+        if (optionalDev.isEmpty()) {
+            System.out.println("No existe un desarrollador con el id indicado");
+            return null;
+        }
+
+        return optionalDev.get();
+    }
+
     private static void mostrarDesarrolladores() {
+        System.out.println("Desarrolladores: ");
         List<Desarrollador> desarrolladores = repositorioDesarrollador.leerTodos();
         for (Desarrollador dev : desarrolladores) {
             System.out.println(dev);
@@ -83,10 +127,13 @@ public class Main {
     private static void mostrarMenuPrincipal() {
         System.out.println("Menú principal\n");
         System.out.println(ActionType.MOSTRAR_TABLERO.getValue() + ". Mostrar tablero.");
+        System.out.println(ActionType.MOSTRAR_TABLERO_FILTRO_USER_ID.getValue() + ". Mostrar tablero filtrando por id del usuario.");
+        System.out.println(ActionType.MOSTRAR_TABLERO_FILTRO_TITULO.getValue() + ". Mostrar tablero filtrando por titulo.");
         System.out.println(ActionType.MOVER_TARJETA.getValue() + ". Mover tarjeta.");
         System.out.println(ActionType.MOSTRAR_DESARROLLADORES.getValue() + ". Mostrar desarrolladores.");
         System.out.println(ActionType.CREAR_TARJETA.getValue() + ". Crear tarjeta.");
-        System.out.println(ActionType.MOSTRAR_CONFIGURACION.getValue() + ". Mostrar configuracion.");
+        System.out.println(ActionType.MOSTRAR_CONFIGURACION.getValue() + ". Mostrar la configuracion.");
+        System.out.println(ActionType.MODIFICAR_CONFIGURACION.getValue() + ". Modificar la configuracion.");
         System.out.println(ActionType.CREAR_TABLERO.getValue() + ". Crear tablero.");
         System.out.println(ActionType.CREAR_DESARROLLADOR.getValue() + ". Crear desarrollador.");
         System.out.println(ActionType.CREAR_COLUMNA.getValue() + ". Crear columna.");
@@ -94,7 +141,7 @@ public class Main {
         System.out.print("\nEcoja una opcion: ");
     }
 
-    private static void moverTarjeta() throws IOException {
+    private static void moverTarjeta(Usuario usuario) throws IOException {
         System.out.println("Moviendo una Tarjeta");
         System.out.print("Indique el numero de la columna de la tarjeta que desea mover: ");
         int indiceColumnaOrigen = Integer.parseInt(sc.nextLine());
@@ -145,20 +192,20 @@ public class Main {
         List<Columna> columnas = tablero.getColumnas();
 
         Desarrollador desarrollador;
-        if(usuario instanceof Administrador){
+        if (usuario instanceof Administrador) {
             List<Desarrollador> desarrolladores = repositorioDesarrollador.leerTodos();
             System.out.println("Escoja uno de los siguientes desarrolladores por id.");
-            for (Desarrollador dev : desarrolladores){
+            for (Desarrollador dev : desarrolladores) {
                 System.out.println(dev.getId() + " " + dev.getNombre());
             }
             final int devId = Integer.parseInt(sc.nextLine());
             var optionalDev = desarrolladores.stream().filter(d -> d.getId() == devId).findFirst();
-            if(optionalDev.isEmpty()){
-                System.out.println("Error al seleccionar el desarrollador");
+            if (optionalDev.isEmpty()) {
+                System.out.println("Error al seleccionar el desarrollador.");
                 return;
             }
             desarrollador = optionalDev.get();
-        }else{
+        } else {
             desarrollador = (Desarrollador) usuario;
         }
 
@@ -168,7 +215,14 @@ public class Main {
         repositorioTablero.guardar(tablero);
     }
 
-    private static void crearDesarrollador() throws IOException {
+    private static void crearDesarrollador(Usuario usuario) throws IOException {
+        System.out.println("Creando un Desarrollador: ");
+        boolean isAdmin = usuario instanceof Administrador;
+        if (!isAdmin) {
+            System.out.println("Sólo los administradores pueden crear un desarrollador.");
+            return;
+        }
+
         System.out.println("Creando un nuevo Desarrolador");
         System.out.print("Indique el nombre: ");
         String nombre = sc.nextLine();
@@ -180,7 +234,13 @@ public class Main {
         repositorioDesarrollador.guardar(desarrollador);
     }
 
-    private static void crearColumna() throws IOException {
+    private static void crearColumna(Usuario usuario) throws IOException {
+        boolean isAdmin = usuario instanceof Administrador;
+        if (!isAdmin) {
+            System.out.println("Solo el administrador puede crear columnas.");
+            return;
+        }
+
         System.out.println("Creando una nueva Columna");
         System.out.print("Indique el titulo de la columna: ");
         String nombre = sc.nextLine();
@@ -222,7 +282,13 @@ public class Main {
         System.out.println("Columna creada correctamente\n");
     }
 
-    private static void crearTablero() throws IOException {
+    private static void crearTablero(Usuario usuario) throws IOException {
+        boolean isAdmin = usuario instanceof Administrador;
+        if (!isAdmin) {
+            System.out.println("Solo el administrador puede crear un tablero");
+            return;
+        }
+
         System.out.println("Creando un nuevo tablero");
         System.out.print("Indique el titulo del tablero: ");
         String nombre = sc.nextLine();
@@ -243,6 +309,36 @@ public class Main {
         System.out.println(tablero);
     }
 
+    private static void mostrarTableroFiltroUserId() {
+        Tablero tablero = repositorioTablero.leer();
+        if (tablero == null) {
+            System.out.println("No se encontró el tablero");
+            return;
+        }
+
+        System.out.println(tablero);
+    }
+
+    private static void mostrarTableroFiltroTitulo() {
+        Tablero tablero = repositorioTablero.leer();
+        if (tablero == null) {
+            System.out.println("No se encontró el tablero");
+            return;
+        }
+
+        System.out.print("Indique la palabra que debe contener las tarjetas que desea ver en el tablero: ");
+        String palabraClave = sc.nextLine();
+
+        for (Columna c : tablero.getColumnas()) {
+            List<Tarjeta> tarjetas = c.getTarjetas().stream()
+                    .filter(t -> t.getTitulo().contains(palabraClave))
+                    .collect(Collectors.toList());
+            c.setTarjetas(tarjetas);
+        }
+
+        System.out.println(tablero);
+    }
+
     public static void mostrarConfiguracion() throws IOException {
         System.out.println("Configuración actual");
         Configuracion configuracion = repositorioConfiguracion.leer();
@@ -251,6 +347,23 @@ public class Main {
             repositorioConfiguracion.guardar(configuracion);
         }
         System.out.println(configuracion);
+    }
+
+    public static void modificarConfiguracion(Usuario usuario) throws IOException {
+        boolean isAdmin = usuario instanceof Administrador;
+        if (!isAdmin) {
+            System.out.println("Sólo el administrador puede cambiar la configuración.");
+            return;
+        }
+
+        mostrarConfiguracion();
+        System.out.print("Indique el número máximo de tarjetas por usuario: ");
+        int maxTarjetasPorUsuario = Integer.parseInt(sc.nextLine());
+        System.out.print("Indique el número máximo de tarjetas por columna: ");
+        int maxTarjetasPorColumna = Integer.parseInt(sc.nextLine());
+        Configuracion config = new Configuracion(maxTarjetasPorUsuario, maxTarjetasPorColumna);
+        repositorioConfiguracion.guardar(config);
+        System.out.println("Configuración guardada con extio");
     }
 
 }

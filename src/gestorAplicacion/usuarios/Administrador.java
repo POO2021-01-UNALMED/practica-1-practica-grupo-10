@@ -1,8 +1,9 @@
 package gestorAplicacion.usuarios;
 
-import java.io.Serializable;
-
 public class Administrador extends Usuario {
+
+    final private String password = "admin";
+
     public Administrador() {
         super("Administrador", "admin@correo.com");
     }
@@ -13,6 +14,10 @@ public class Administrador extends Usuario {
 
     public Administrador(String nombre, String correo) {
         super(nombre, correo);
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     @Override

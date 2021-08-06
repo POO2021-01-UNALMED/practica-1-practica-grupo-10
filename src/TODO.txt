@@ -1,12 +1,8 @@
+* agregar al repositorio buscar cuantas tarjetas tiene asignada un Desarrollador para cuando se creen
+nuevas restiringirlo
 
-el unico usuario que puede asignar tareas a otros usuarios es el desarrollador
-limitar el mover -> solo en usuario asignado o Administrador puede hacerlo
-limitar el crear columna -> solo el admin puede hacerlo
-al crear Tarjeta si el usuario que lo hace es un admin, se debe indicar a que usuario
-se le asigna, en caso contrario se le asigna al usuario que la crea
-crear filtro al tablero
-agregar el uso de una interfaz
+* al agregar tarjeta verificar cuantas tiene la columna
 
-usar el Id del ultimo(a) Columna, Usuario y Desarrollador para asignar el nuevo
+* limitar el mover -> solo en usuario asignado o Administrador puede hacerlo
 
 

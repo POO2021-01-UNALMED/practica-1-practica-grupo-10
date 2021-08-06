@@ -2,8 +2,11 @@ package uiMain;
 
 public enum ActionType {
     MOSTRAR_CONFIGURACION(0),
+    MODIFICAR_CONFIGURACION(1),
     CREAR_TABLERO(10),
     MOSTRAR_TABLERO(11),
+    MOSTRAR_TABLERO_FILTRO_USER_ID(12),
+    MOSTRAR_TABLERO_FILTRO_TITULO(13),
     CREAR_DESARROLLADOR(40),
     MOSTRAR_DESARROLLADORES(41),
     CREAR_COLUMNA(20),
@@ -15,14 +18,14 @@ public enum ActionType {
 
     private final int value;
 
-    private ActionType(int value){
+    private ActionType(int value) {
         this.value = value;
     }
 
-    public static ActionType fromInt(int value){
+    public static ActionType fromInt(int value) {
         ActionType[] actions = ActionType.values();
-        for (ActionType action: actions ) {
-            if(action.value == value){
+        for (ActionType action : actions) {
+            if (action.value == value) {
                 return action;
             }
         }
@@ -30,7 +33,7 @@ public enum ActionType {
         return SALIR;
     }
 
-    public int getValue(){
+    public int getValue() {
         return value;
     }
 }
