@@ -13,6 +13,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
 
@@ -26,19 +27,22 @@ public class VentanaPrincipal {
     }
 
     public VentanaPrincipal() throws FileNotFoundException {
-        Label nombreProcesoConsulta = new Label("Nombre del proceso o consulta");
-        Label descripcionProcesoConsulta = new Label("Descripcion detallada");
+         cambiarEscenaAplicacion();
+    }
 
-        String tituloCriterios = "titulo criterios";
-        String[] criterios = {"nombre", "edad"};
-        String tituloValores = "titulo valores";
-        String[] valores = {"stiven", "100"};
-        boolean[] habilitado = {true, false};
+    public void cambiarEscenaAplicacion(){
+        TextArea mensajeBienvenida = new TextArea("Bienvenido al Tablero Kanban\n"+
+                "Utilize el menu para acceder a información general de la aplicacion, \n"+
+                "realizar los procesos y consultas que desee\n"+
+                "y ver informacion de los desarrolladores");
 
-        FieldPanel fieldPanel = new FieldPanel(tituloCriterios, criterios, tituloValores, valores, habilitado);
+        mensajeBienvenida.setDisable(true);
+
         MenuBar menuBar = createMenuBar();
-        VBox vBox = new VBox(menuBar, fieldPanel);
-        escena = new Scene(vBox, 1280, 720);
+        VBox vBox = new VBox(menuBar, mensajeBienvenida);
+        escena = new Scene(vBox, Constantes.ANCHO_VENTANA, Constantes.ALTO_VENTANA);
+        if(MainFX.primaryStage != null)
+            MainFX.primaryStage.setScene(escena);
     }
 
 
@@ -121,10 +125,10 @@ public class VentanaPrincipal {
         MenuItem menuItemVerTablero = new MenuItem(Constantes.VER_TABLERO);
         menuItemVerTablero.setOnAction(new VentanaPrincipal.EventHandlerVentanaPrincipal());
 
-        MenuItem menuItemVerCrearTarjeta = new MenuItem(Constantes.CREAR_TARJETA);
+        MenuItem menuItemVerCrearTarjeta = new MenuItem(Constantes.MENU_ITEM_CREAR_TARJETA);
         menuItemVerCrearTarjeta.setOnAction(new VentanaPrincipal.EventHandlerVentanaPrincipal());
 
-        MenuItem menuItemModificarConfiguracion = new MenuItem(Constantes.CAMBIAR_CONFIGURACION);
+        MenuItem menuItemModificarConfiguracion = new MenuItem(Constantes.MENU_ITEM_CAMBIAR_CONFIGURACION);
         menuItemModificarConfiguracion.setOnAction(new VentanaPrincipal.EventHandlerVentanaPrincipal());
 
         Menu menuProcesosConsultas = new Menu("Procesos y Consultas");
@@ -134,7 +138,10 @@ public class VentanaPrincipal {
 
     public Menu crearMenuArchivo() {
         MenuItem menuItemAplicacion = new MenuItem(Constantes.MENU_ITEM_APLICACION);
+        menuItemAplicacion.setOnAction(new EventHandlerVentanaPrincipal());
+
         MenuItem menuItemSalir = new MenuItem(Constantes.MENU_ITEM_SALIR);
+        menuItemSalir.setOnAction(new EventHandlerVentanaPrincipal());
 
         Menu menuArchivo = new Menu("Archivo");
         menuArchivo.getItems().addAll(menuItemAplicacion, menuItemSalir);
@@ -152,10 +159,15 @@ public class VentanaPrincipal {
             MenuItem mi = (MenuItem) source;
             if (mi.getText().equals(Constantes.VER_TABLERO)) {
                 cambiarEscenaVerTablero();
-            } else if (mi.getText().equals(Constantes.CREAR_TARJETA)) {
+            } else if (mi.getText().equals(Constantes.MENU_ITEM_CREAR_TARJETA)) {
                 cambiarEscenaCrearTarjeta(new Desarrollador());
-            } else if (mi.getText().equals(Constantes.CAMBIAR_CONFIGURACION)) {
+            } else if (mi.getText().equals(Constantes.MENU_ITEM_CAMBIAR_CONFIGURACION)) {
                 cambiarEscenaConfiguracion(new Administrador());
+            } else if (mi.getText().equals(Constantes.MENU_ITEM_APLICACION)){
+                cambiarEscenaAplicacion();
+            } else if(mi.getText().equals(Constantes.MENU_ITEM_SALIR)){
+                System.out.println("Cierra");
+                MainFX.primaryStage.close();
             }
         }
     }
