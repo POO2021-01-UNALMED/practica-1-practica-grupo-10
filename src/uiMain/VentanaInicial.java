@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
 public class VentanaInicial {
     private Scene escena;
 
-    public Scene getEscena(){
+    public Scene getEscena() {
         return escena;
     }
 
@@ -76,8 +76,8 @@ public class VentanaInicial {
 
         iniciarAppButton.setOnAction(new EventHandlerVentanaInicial());
 
-        gridP4.add(imageView1, 0,0);
-        gridP4.add(iniciarAppButton, 0,1);
+        gridP4.add(imageView1, 0, 0);
+        gridP4.add(iniciarAppButton, 0, 1);
         return gridP4;
     }
 
@@ -113,10 +113,10 @@ public class VentanaInicial {
         imageView4.setPreserveRatio(true);
         imageView4.setFitHeight(100);
 
-        gridP5.add(imageView1, 0,0);
-        gridP5.add(imageView2, 0,1);
-        gridP5.add(imageView3, 1,0);
-        gridP5.add(imageView4, 1,1);
+        gridP5.add(imageView1, 0, 0);
+        gridP5.add(imageView2, 0, 1);
+        gridP5.add(imageView3, 1, 0);
+        gridP5.add(imageView4, 1, 1);
 
         return gridP5;
     }
@@ -126,8 +126,8 @@ public class VentanaInicial {
         Label labelSaludo = new Label("Saludo de bienvenida al sistema");
         TextArea descripcion = new TextArea("Maneja las tareas usando un Tablero Canvan de forma eficiente, minimizando cantidad de las tareas en ejecucion.");
         descripcion.setDisable(true);
-        gridP3.add(labelSaludo, 0,0);
-        gridP3.add(descripcion, 0,1);
+        gridP3.add(labelSaludo, 0, 0);
+        gridP3.add(descripcion, 0, 1);
         return gridP3;
     }
 
@@ -135,7 +135,7 @@ public class VentanaInicial {
         GridPane gridPane4 = createGenericGridPane();
         TextArea textoHojaVida = new TextArea("Desarrollador backend con 0 experiencia y gusto por el frontend.");
         textoHojaVida.setDisable(true);
-        gridPane4.add(textoHojaVida, 0,0);
+        gridPane4.add(textoHojaVida, 0, 0);
         return gridPane4;
     }
 
@@ -144,7 +144,7 @@ public class VentanaInicial {
         public void handle(ActionEvent actionEvent) {
             Object source = actionEvent.getSource();
 
-            if(source instanceof Button) {
+            if (source instanceof Button) {
                 MainFX.primaryStage.setScene(MainFX.escenaPrinpical);
             }
         }
