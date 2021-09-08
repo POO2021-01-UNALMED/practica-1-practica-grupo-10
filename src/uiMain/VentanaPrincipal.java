@@ -13,7 +13,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
 
@@ -21,6 +20,7 @@ public class VentanaPrincipal {
     private Scene escena;
     RepositorioConfiguracion repositorioConfiguracion = new RepositorioConfiguracionImp();
     RepositorioTablero repositorioTablero = new RepositorioTablero();
+    Alert alert;
 
     public Scene getEscena() {
         return escena;
@@ -115,7 +115,9 @@ public class VentanaPrincipal {
     }
 
     public Menu crearMenuAyuda() {
-        MenuItem menuItemAcercaDe = new MenuItem("Acerca de");
+        MenuItem menuItemAcercaDe = new MenuItem(Constantes.MENU_ITEM_ACERCA_DE);
+        menuItemAcercaDe.setOnAction(new EventHandlerVentanaPrincipal());
+
         Menu menuAyuda = new Menu("Ayuda");
         menuAyuda.getItems().add(menuItemAcercaDe);
         return menuAyuda;
@@ -165,8 +167,17 @@ public class VentanaPrincipal {
                 cambiarEscenaConfiguracion(new Administrador());
             } else if (mi.getText().equals(Constantes.MENU_ITEM_APLICACION)){
                 cambiarEscenaAplicacion();
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("");
+                alert.setHeaderText("En el menú encontrará las acciones que puede realizar");
+                alert.show();
+            } else if(mi.getText().equals(Constantes.MENU_ITEM_ACERCA_DE)) {
+                alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Acerca de..");
+                alert.setHeaderText("Programa creado por");
+                alert.setContentText("Silvio Stiven Villegas Castro\n svillegasc@unal.edu.co");
+                alert.show();
             } else if(mi.getText().equals(Constantes.MENU_ITEM_SALIR)){
-                System.out.println("Cierra");
                 MainFX.primaryStage.close();
             }
         }

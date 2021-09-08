@@ -189,9 +189,11 @@ public class VentanaInicial {
                 MainFX.primaryStage.setScene(MainFX.escenaPrinpical);
             }
 
-            MenuItem mi = (MenuItem) source;
-            if (mi.getText().equals(Constantes.MENU_ITEM_SALIR)) {
-                MainFX.primaryStage.close();
+            if(source instanceof MenuItem) {
+                MenuItem mi = (MenuItem) source;
+                if (mi.getText().equals(Constantes.MENU_ITEM_SALIR)) {
+                    MainFX.primaryStage.close();
+                }
             }
         }
     }

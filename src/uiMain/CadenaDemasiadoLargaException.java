@@ -2,10 +2,14 @@ package uiMain;
 
 public class CadenaDemasiadoLargaException extends  ErrorAplicacion{
     private final int maxLenth = 30;
-    private int tamano;
+    private int tamanoMaximo;
 
-    public CadenaDemasiadoLargaException(int tamano){
+    public CadenaDemasiadoLargaException(int tamanoMaximo){
         super();
-        this.tamano = tamano;
+        this.tamanoMaximo = tamanoMaximo;
+    }
+
+    public int tamanoMaximo(){
+        return tamanoMaximo;
     }
 }

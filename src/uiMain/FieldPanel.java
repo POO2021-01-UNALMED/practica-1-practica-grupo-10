@@ -12,6 +12,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -25,6 +26,7 @@ public class FieldPanel extends Pane {
     private HashMap<String, String> criteroToValor = new HashMap<>();
     TextField[] textFieldValores;
     String tituloCriterios;
+    Alert alert = new Alert(Alert.AlertType.NONE);
 
     RepositorioConfiguracion repositorioConfiguracion = new RepositorioConfiguracionImp();
     RepositorioTablero repositorioTablero = new RepositorioTablero();
@@ -86,7 +88,19 @@ public class FieldPanel extends Pane {
             } else if (button.getText() == "Aceptar") {
                 System.out.println("Click en aceptar");
                 if (tituloCriterios == "Datos Configuracion") {
-                    cambiarConfiguracion();
+                    try {
+                        cambiarConfiguracion();
+                    }catch (MaximoTarjetasExcedidoException e){
+                        alert.setAlertType(Alert.AlertType.ERROR);
+                        alert.setTitle("Error en el numero maximo de tarjetas por usuario");
+                        alert.setHeaderText("Parametro invalido");
+                        alert.setContentText("El maximo permitido es "+ e.getMaxTarjetas() + ", pero ingresó "+ e.getNumTarjetasIngresadas());
+                        alert.show();
+                    }
+                    alert.setAlertType(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Configuracion guardada con exito");
+                    alert.setContentText("La configuracion fue guardada");
+                    alert.show();
                 }
             }
         }
@@ -100,9 +114,12 @@ public class FieldPanel extends Pane {
             }
         }
 
-        private void cambiarConfiguracion() {
+        private void cambiarConfiguracion() throws MaximoTarjetasExcedidoException {
             int maxTarPorUsuario = Integer.valueOf(textFieldValores[0].getText());
             int maxTarPorColumna = Integer.valueOf(textFieldValores[1].getText());
+
+            if(maxTarPorUsuario > 10)
+                throw new MaximoTarjetasExcedidoException(maxTarPorUsuario);
 
             Configuracion config = new Configuracion(maxTarPorUsuario, maxTarPorColumna);
             try {
